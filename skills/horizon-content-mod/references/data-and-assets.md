@@ -33,8 +33,13 @@ Everything here was confirmed working on Horizon 0.2.97 with an installed, enabl
 Notes:
 - `cookingtime` is in ticks (200 = ~10 seconds).
 - `experience` = XP orbs when taking the output.
-- `result.id` — vanilla ids work with or without the `minecraft:` prefix in the result; ingredients used with the prefix.
+- Use the `minecraft:` prefix on both `ingredient` and `result.id` — that is what the verified examples do. (The result id was also observed working without the prefix; there is no reason to deviate.)
 - Other cooking types (`minecraft:smoking`, `minecraft:campfire_cooking`) follow the same shape but were not separately verified.
+
+## Schema limits (unverified territory)
+
+- Verified fields: `type`, `ingredient` (single item id string), `result.id`, `cookingtime`, `experience`. A `result.count` for >1 output is plausible but **unverified** — ship 1:1 ratios first and test before relying on it.
+- Shaped/shapeless crafting, tag ingredients, and multi-ingredient formats: **not verified** on 0.2.97. If you must attempt them, read the recipe handling in the Horizon source first (`crates/horizon-client/src/lan/advancements.rs` in the pinned checkout) and add one file at a time per the testing loop.
 
 ## Lang file — VERIFIED
 
@@ -46,7 +51,7 @@ Notes:
 }
 ```
 
-Used for recipe display names.
+Used for recipe display names; the verified key pattern is `recipe.<file-stem>`. Where exactly it renders and which other keys exist is unverified — stick to this pattern.
 
 ## Namespace rules — IMPORTANT
 

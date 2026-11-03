@@ -1,6 +1,6 @@
 # horizon-mod.toml — Field Reference
 
-Source of truth: `crates/horizon-mods/src/manifest.rs` in the Horizon repo (verify against the current checkout — the manifest is schema-strict with `deny_unknown_fields`, so an unknown or misspelled key breaks the whole mod).
+Source of truth: `crates/horizon-mods/src/manifest.rs` in the Horizon repo — verify against the current checkout **when one is available**; otherwise rely on this reference (the fields below are verified). The manifest is schema-strict with `deny_unknown_fields`, so an unknown or misspelled key breaks the whole mod.
 
 ## Verified example
 
@@ -42,8 +42,10 @@ Observed set: `game-read`, `chat`, `hud`, `storage`, `command`, `registries`, pl
 
 Rules:
 - Content mods (api `0.2`) require `registries`.
+- **Capability trap:** there is an experimental `recipes` capability, and a recipe mod *sounds* like it needs it — it does not. `registries` alone is verified sufficient for data-driven recipes.
 - Experimental capabilities require explicit opt-in; expect a warning from inspectors and a prompt for players.
 - Request the minimum set — the player sees capability descriptions before enabling the mod.
+- `side`: `both` is the verified safe choice for pure-data mods; whether `client` alone suffices for recipes is unverified.
 
 ## Package layout
 

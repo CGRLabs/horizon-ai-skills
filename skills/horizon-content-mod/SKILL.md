@@ -9,11 +9,11 @@ Horizon content mods are **data and assets only — no code**. A `.hmod` is a zi
 
 ## The working loop
 
-1. **Scaffold** the project folder (manifest + `data/`/`assets/`), or run `cargo horizon-mod new <path> --name "Name"`.
+1. **Scaffold** the project folder (manifest + `data/`/`assets/`), or run `cargo horizon-mod new <path> --name "Name"`. If you used the scaffold: **delete its generated example content** (blockstates, items, models, block declarations, loot tables, and anything under `data/minecraft/`) before adding yours — it demonstrates the exact silently-failing patterns described in `references/pitfalls.md`. Keep only the manifest and your own files.
 2. **Add content** under the mod's own namespace: `data/<mod-id>/recipe/...`, `assets/<mod-id>/lang/...`. Never write into `data/minecraft/` — put overrides in `data/<mod-id>/`.
 3. **Build**: `cargo horizon-mod build` → produces `target/horizon-mod/<id>.hmod`.
 4. **Check**: `cargo horizon-mod check target/horizon-mod/<id>.hmod`.
-5. **Install**: copy the `.hmod` into the game's `horizon-mods/` directory.
+5. **Install**: copy the `.hmod` into the game's `horizon-mods/` directory. Where that is: inside the **Horizon install folder**, next to `horizon-client.exe` and `horizon-mods.txt` (e.g. `...\horizon-windows-x64\horizon-mods\`) — this is where our installs load from. The user-data directory (`%APPDATA%\Roaming\horizon`) is a different location and held no mods folder. Create the folder if a fresh install lacks it.
 6. **Enable**: content mods load once at startup — quit the game completely, relaunch, Options → Mods → enable, quit completely again, relaunch, load a world.
 
 After step 3, optionally run `horizon-inspect target/horizon-mod/<id>.hmod --json` (exit 0 = valid) for a security/manifest report if the tool is installed.

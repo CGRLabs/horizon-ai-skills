@@ -2,6 +2,10 @@
 
 These cost real debugging hours on Horizon 0.2.97. The unifying theme: **Horizon can silently reject content it does not understand, without writing errors to logs.** Assume nothing worked until you saw it work in-game.
 
+## 0. The scaffold ships the traps
+
+`cargo horizon-mod new` generates example content — new block/item declarations with models and blockstates, a loot table, and a tag under `data/minecraft/`. That is precisely pitfall 1 (declarations that silently don't appear) plus pitfall 5 (wrong layer). **Delete all example content and keep only `horizon-mod.toml` plus files you wrote yourself.** A first-time user who trusts the scaffold will ship the exact failure modes this file documents.
+
 ## 1. New items/blocks may not appear — at all
 
 The full test mod (2 blocks, 4 items, 19 recipes, models, blockstates) simply did not appear in-game on v0.2.97, while vanilla-item recipes from the same pipeline worked.
@@ -18,7 +22,7 @@ The full test mod (2 blocks, 4 items, 19 recipes, models, blockstates) simply di
 
 When "the mod doesn't show up":
 
-1. Confirm the `.hmod` is in the game's `horizon-mods/` directory (not the project's `target/`).
+1. Confirm the `.hmod` is in the game's `horizon-mods/` directory (not the project's `target/`). In our installs that folder sits in the **game install folder**, next to `horizon-client.exe` and `horizon-mods.txt` — the `%APPDATA%\Roaming\horizon` user-data directory is a different place and held no mods folder.
 2. Confirm the enable toggle: content mods load **once at startup** — the enable dance is quit → relaunch → Options → Mods → enable → **quit completely again** → relaunch → world. Enabling mid-session does nothing.
 3. Check `horizon-mods.txt` in the game folder — the mod should appear as `mod.<id>:true`.
 4. Run `cargo horizon-mod check <file>` and `horizon-inspect <file> --json`; fix every error (manifest syntax, id rules, unknown fields).
