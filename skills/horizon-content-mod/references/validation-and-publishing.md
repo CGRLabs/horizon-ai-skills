@@ -1,0 +1,33 @@
+# Validation, Inspection, and Publishing
+
+## Local validation loop
+
+```sh
+cargo horizon-mod build                        # zip the mod -> target/horizon-mod/<id>.hmod
+cargo horizon-mod check target/horizon-mod/<id>.hmod   # registry-rule validation
+horizon-inspect target/horizon-mod/<id>.hmod --json    # security + manifest report (if installed)
+```
+
+- Exit codes: `0` valid, `1` validation failure, `2` tool error — safe to gate scripts/CI on them.
+- `horizon-inspector` (https://github.com/CGRLabs/horizon-inspector) checks archive safety (Zip-Slip, zip bombs, duplicate entries), manifest validity, checksums, and optional Minisign signatures, and classifies security tier. It never executes mod code.
+- Warnings worth fixing before publishing: missing description, missing authors, experimental capabilities.
+
+## Registry model (how publishing works)
+
+- The official registry is the `horizon-mods` GitHub repository: `index.json` lists packages with TOML metadata and SHA-256 checksums; `revoked.toml` lists revocations. **It is the source of truth** — aggregator sites (including CGRLabs Horizon Hub) mirror it rather than replace it.
+- Submission flows through the registry CLI (`cargo horizon-mod registry`) and is governed by that repo's `MOD-POLICY.md` — read it before submitting.
+- Keep releases reproducible: same sources → same bytes → same SHA-256.
+
+## Deterministic packaging tips
+
+- Build from a clean tree; avoid timestamps/absolute paths in file content.
+- Pin your tool versions in the README so others reproduce your checksums.
+- State the exact Horizon version(s) tested — content mods ride API lines (0.2), but data-format quirks are version-specific (see pitfalls.md).
+
+## Distribution checklist
+
+1. `cargo horizon-mod check` passes with zero errors.
+2. `horizon-inspect --json` shows zero errors (warnings addressed or explained).
+3. Tested in-game on a stated Horizon version — the enable dance completed and the content visibly works.
+4. README: what it adds, the id, tested-on version, uninstall (delete the `.hmod` from `horizon-mods/`).
+5. No Mojang assets bundled; vanilla ids referenced rather than copied.
