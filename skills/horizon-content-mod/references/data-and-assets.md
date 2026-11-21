@@ -58,10 +58,29 @@ Used for recipe display names; the verified key pattern is `recipe.<file-stem>`.
 - Put files under `data/<your-mod-id>/...`, **never** `data/minecraft/...`. The game layers mod namespaces over base resources; writing into `data/minecraft/` is the wrong layer and behaves unpredictably.
 - Mod id must match the namespace directory exactly (`[a-z0-9_]`).
 
-## What was NOT verified (as of Horizon 0.2.97)
+## Latest content surfaces (upstream, 2026-11)
 
-- New block/item declarations (with models + blockstates) — did **not** render in-game; see pitfalls.md.
-- Item `components` — unsupported; stripped from the working mod.
-- Advancement/loot-table JSONs — formats expected to mirror vanilla but not proven in-game yet.
+The notes above describe Horizon 0.2.97. Upstream `origin/main` (`docs/mods.md`) now documents
+working data-driven content far beyond recipes. An AI following this skill should read the live doc
+before assuming a surface is unavailable:
 
-Treat anything in this section as untested: add one file, build, install, test in-game, and only then add the next.
+```sh
+git -C repositories/horizon show origin/main:docs/mods.md
+```
+
+Surfaces now documented (all data-only, in `data/<id>/horizon/...`):
+- **Blocks** (`block/*.json`): template + properties, state properties, `random_ticks`, `state_light`,
+  `render_shape`, `occludes`, `shapes`/`collision_shapes`, `connects_to` pipes, `thickness`, sign blocks
+  (`wood_type`, `wall_block`), `place_block` on items.
+- **Items** (`item/*.json`): components patch (`minecraft:<type>` sets, `!minecraft:<type>` removes),
+  `crafting_remainder`, `place_block`.
+- **Creative tabs** (`creative_tab/*.json`), **mob effects** (`mob_effect/*.json` + 18x18 icon),
+  **fluids** (`fluid/*.json`, water/lava templates), **entity types** (`entity_type/*.json`: thrown via
+  snowball template, living via zombie/villager/wandering_trader with `attributes`), **menu types**
+  (`menu/*.json` with optional crafting grids and linked slots), **damage types**.
+- **Tags** merge like data packs; `horizon:add_to` for structure sets/pools/processor lists;
+  `horizon:enhanced_terrain_adaptation`.
+- **Hot reload**: asset/data-only mods reload in-game like `/reload`; block/item/entity mods still need
+  a restart.
+
+Keep the "one change at a time, test in-game" discipline — silent rejection still happens.

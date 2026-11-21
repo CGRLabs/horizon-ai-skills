@@ -1,5 +1,7 @@
 # Pitfalls — The Silent-Failure Catalog
 
+> **Staleness note (2026-11-21):** Pitfalls 1 and 2 ("new items/blocks may not appear", "item components unsupported") describe Horizon **v0.2.97 (2026-10)**. Upstream `origin/main` (`docs/mods.md`) now documents working data-driven blocks/items with models, state properties, shapes, components, creative tabs, fluids, entity types, menu types, etc. Before relying on the old limits, read `git show origin/main:docs/mods.md` and re-test on your actual Nightly. The debugging/playbook pitfalls (3–6) still apply.
+
 These cost real debugging hours on Horizon 0.2.97. The unifying theme: **Horizon can silently reject content it does not understand, without writing errors to logs.** Assume nothing worked until you saw it work in-game.
 
 ## 0. The scaffold ships the traps
@@ -22,7 +24,7 @@ The full test mod (2 blocks, 4 items, 19 recipes, models, blockstates) simply di
 
 When "the mod doesn't show up":
 
-1. Confirm the `.hmod` is in the game's `horizon-mods/` directory (not the project's `target/`). In our installs that folder sits in the **game install folder**, next to `horizon-client.exe` and `horizon-mods.txt` — the `%APPDATA%\Roaming\horizon` user-data directory is a different place and held no mods folder.
+1. Confirm the `.hmod` is in the game's `horizon-mods/` directory (not the project's `target/`). In our installs that folder sits in the **game install folder**, next to `horizon-client.exe` and `horizon-mods.txt` — the `%APPDATA%\Roaming\horizon` user-data directory is a different place and held no mods folder. **Exception:** a game launched by `horizon-ctl launch` reads mods from `$HORIZON_HOME`, not the install folder — a scratch home starts with no mods at all. See `in-game-testing.md`.
 2. Confirm the enable toggle: content mods load **once at startup** — the enable dance is quit → relaunch → Options → Mods → enable → **quit completely again** → relaunch → world. Enabling mid-session does nothing.
 3. Check `horizon-mods.txt` in the game folder — the mod should appear as `mod.<id>:true`.
 4. Run `cargo horizon-mod check <file>` and `horizon-inspect <file> --json`; fix every error (manifest syntax, id rules, unknown fields).
